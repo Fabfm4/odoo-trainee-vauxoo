@@ -1,6 +1,59 @@
 <odoo>
     <!-- explicit list view definition -->
     <!-- Definition of course views -->
+    <record model="ir.ui.view" id="course_from_view">
+        <field name="name">course.form</field>
+        <field name="model">openacademy.course</field>
+        <field name="arch" type="xml">
+            <form string="Course Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="responsible_id"/>
+                    </group>
+                </sheet>
+                <notebook>
+                    <page string="Description">
+                        <field name="description"/>
+                    </page>
+                    <page string="About">
+                        This is a example of notebooks
+                    </page>
+                    <page string="Sessions">
+                        <field name="sessions_id" nolabel="1">
+                            <tree string="Register Sessions">
+                                <field name="name"/>
+                                <field name="instructor_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="course_list_view">
+        <field name="name">course.list</field>
+        <field name="model">openacademy.course</field>
+        <field name="arch" type="xml">
+            <tree string="Course Tree">
+                <field name="name" string="Name Tree"/>
+                <field name="description"/>
+                <field name="responsible_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="course_search_view">
+        <field name="name">course.search</field>
+        <field name="model">openacademy.course</field>
+        <field name="arch" type="xml">
+            <search string="Course Search">
+                <field name="name" string="Name Search"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
 
     <record model="ir.actions.act_window" id="course_list_action">
       <field name="name">Courses</field>
