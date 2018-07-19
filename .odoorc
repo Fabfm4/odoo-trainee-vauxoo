@@ -1,0 +1,4 @@
+[options]
+addons_path = /home/myosusr/odoo-repo/addons,/home/myosusr/openacademy-repo
+db_name = odoodb
+dbfilter = odoodb
