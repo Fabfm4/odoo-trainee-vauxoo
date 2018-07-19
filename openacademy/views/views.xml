@@ -70,4 +70,49 @@
     <menuitem name="Open Academy" id="openacademy_menu" parent="main_openacademy_menu"/>
     <menuitem name="Courses" id="courses_menu" parent="openacademy_menu" action="course_list_action"/>
 
+    <!-- Definition of sessions views -->
+    <record model="ir.ui.view" id="session_from_view">
+        <field name="name">session.form</field>
+        <field name="model">openacademy.session</field>
+        <field name="arch" type="xml">
+            <form string="Session Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="start_date"/>
+                        <field name="duration"/>
+                        <field name="seats"/>
+                        <field name="instructor_id"/>
+                        <field name="course_id"/>
+                        <label for="attendee_ids"/>
+                        <field name="attendee_ids" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="session_list_action">
+      <field name="name">Sessions</field>
+      <field name="res_model">openacademy.session</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="session_tree_view">
+        <field name="name">session.tree</field>
+        <field name="model">openacademy.session</field>
+        <field name="arch" type="xml">
+            <tree string="Session Tree">
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="duration"/>
+                <field name="seats"/>
+                <field name="instructor_id"/>
+                <field name="course_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <menuitem name="Sessions" id="session_menu" parent="openacademy_menu" action="session_list_action"/>
 </odoo>
