@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api, exceptions, _
 
 
 def get_uid(self, *a):
@@ -38,11 +38,11 @@ class Course(models.Model):
     _sql_constraints = [
         ("name_description_check",
          "CHECK(name != description)",
-         "The title of the course should not be the description"),
+         _("The title of the course should not be the description")),
 
         ("name_unique",
          "UNIQUE(name)",
-         "The course title must be unique"),
+         _("The course title must be unique")),
     ]
 
 
@@ -103,16 +103,16 @@ class Session(models.Model):
             self.active = False
             return {
                 "warning": {
-                    "title": "Incorrect 'seats' value",
-                    "message": "The number of available seats may not be negative"
+                    "title": _("Incorrect 'seats' value"),
+                    "message": _("The number of available seats may not be negative")
                 }
             }
         if self.seats < len(self.attendee_ids):
             self.active = False
             return {
                 "warning": {
-                    "title": "Too many attendees",
-                    "message": "Increase seats or remove excess attendees"
+                    "title": _("Too many attendees"),
+                    "message": _("Increase seats or remove excess attendees")
                 }
             }
         self.active = True
@@ -138,5 +138,5 @@ class Session(models.Model):
         for r in self:
             if r.instructor_id and r.instructor_id in r.attendee_ids:
                 raise exceptions.ValidationError(
-                    "A session's instructor can't be an attendee"
+                    _("A session's instructor can't be an attendee")
                 )
