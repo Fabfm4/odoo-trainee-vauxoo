@@ -38,3 +38,19 @@ class GlobalTestOpenAcademyCourse(TransactionCase):
             test_01_same_name_description_correct = True
 
         self.assertTrue(test_01_same_name_description_correct)
+
+    def test_02_two_course_same_name(self):
+        """
+        Test two create two course with same name.
+        To raise constraint of unique name.
+        """
+        test_02_two_course_same_name_correct = False
+        try:
+            new_id = self.create_course('test1', 'test_description', None)
+            print("new id: ", new_id)
+            new_id2 = self.create_course('test1', 'test_description', None)
+            print("new id2: ", new_id2)
+        except IntegrityError:
+            test_02_two_course_same_name_correct = True
+
+        self.assertTrue(test_02_two_course_same_name_correct)
