@@ -1,0 +1,37 @@
+sudo: false
+
+lenguage: python
+
+cache:
+  bundler: true
+  directories:
+    - $HOME/docker
+
+python:
+  - "2.7"
+
+services:
+  - docker
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.22.0
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - mv .odoorc .odoorc.bak
+  - mv .odoorc.travis .odoorc
+
+install:
+  - docker-compose up -d
+  - docker exec -it benandfrank-odoo bash -c "sudo pip install flake8"
+  - docker exec -it benandfrank-odoo bash -c "sudo /etc/init.d/postgresql start"
+  - docker exec -it benandfrank-odoo bash -c "createdb odoodb_travis"
+  - docker exec -it benandfrank-odoo bash -c "./odoo-repo/odoo-bin -d odoodb_test --stop-after-init"
+  - docker exec -it benandfrank-odoo bash -c "./odoo-repo/odoo-bin -i openacademy --stop-after-init"
+
+script:
+  - docker exec -it benandfrank-odoo bash -c "flake8 openacademy-repo"
+  - docker exec -it benandfrank-odoo bash -c "./odoo-repo/odoo-bin -u openacademy --stop-after-init --test-enable"
