@@ -95,7 +95,8 @@ class Session(models.Model):
     @api.depends("seats", "attendee_ids")
     def _taken_seats(self):
         for record in self.filtered(lambda r: r.seats):
-            record.taken_seats = 100.0 * len(record.attendee_ids) / record.seats
+            seats = record.seats
+            record.taken_seats = 100.0 * len(record.attendee_ids) / seats
 
     @api.onchange("seats", "attendee_ids")
     def _verify_valid_seats(self):
@@ -104,7 +105,9 @@ class Session(models.Model):
             return {
                 "warning": {
                     "title": _("Incorrect 'seats' value"),
-                    "message": _("The number of available seats may not be negative")
+                    "message": _(
+                        "The number of available seats may not be negative"
+                    )
                 }
             }
         if self.seats < len(self.attendee_ids):

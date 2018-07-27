@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from . import controllers
-from . import models
-from . import wizard
+from . import controllers  # noqa
+from . import models  # noqa
+from . import wizard  # noqa

@@ -17,9 +17,13 @@ call = functools.partial(
     DB, uid, PASS)
 
 # 2. Read the sessions
-sessions = call('openacademy.session', 'search_read', [], ['name', 'seats', 'course_id'])
+sessions = call(
+    'openacademy.session', 'search_read', [], ['name', 'seats', 'course_id']
+)
 for session in sessions:
-    print("Session %s (%s seats) %s" % (session['name'], session['seats'], session['course_id']))
+    print("Session %s (%s seats) %s" % (
+        session['name'], session['seats'], session['course_id'])
+    )
 # 3.create a new session
 session_id = call('openacademy.session', 'create', {
     'name': 'My session',
