@@ -1,37 +1,45 @@
+language: python
+
 sudo: false
-
-lenguage: python
-
 cache:
-  bundler: true
+  apt: true
   directories:
-    - $HOME/docker
+    - $HOME/.pip-cache/
 
 python:
-  - "2.7"
+  - "3.4"
 
-services:
-  - docker
+virtualenv:
+  system_site_packages: true
 
 env:
-  - DOCKER_COMPOSE_VERSION=1.22.0
+  global:
+  - LINT_CHECK=0 ODOO_LINT=0 TESTS="0" VERSION="11.0" ODOO_REPO="vauxoo/odoo"
 
-before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - mv .odoorc .odoorc.bak
-  - mv .odoorc.travis .odoorc
+  matrix:
+  - LINT_CHECK=1
+  - ODOO_LINT=1
+  - TESTS="1" UNIT_TEST="1"
+
+addons:
+  apt:
+    packages:
+      - expect-dev  # provides unbuffer utility
+      - python-lxml  # because pip installation is slow
+      - python-simplejson
+      - python-serial
+      - python-xlrd
 
 install:
-  - docker-compose up -d
-  - docker exec -it benandfrank-odoo bash -c "sudo pip install flake8"
-  - docker exec -it benandfrank-odoo bash -c "sudo /etc/init.d/postgresql start"
-  - docker exec -it benandfrank-odoo bash -c "createdb odoodb_travis"
-  - docker exec -it benandfrank-odoo bash -c "./odoo-repo/odoo-bin -d odoodb_test --stop-after-init"
-  - docker exec -it benandfrank-odoo bash -c "./odoo-repo/odoo-bin -i openacademy --stop-after-init"
+  - git clone --single-branch --depth=1 https://github.com/vauxoo/maintainer-quality-tools.git -b master ${HOME}/maintainer-quality-tools
+  - find ${HOME}/maintainer-quality-tools/travis -name test_flake8 -exec sed -i "s/get_modules/get_modules_changed/g" {} \;
+  - find ${HOME}/maintainer-quality-tools/travis -name test_flake8 -exec sed -i "s/get_modules_changed(os.path.abspath('.')/get_modules_changed(os.path.abspath('.'), 'origin\/' \+ os.environ['TRAVIS_BRANCH']/g" {} \;
+  - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
+  - travis_install_nightly
 
 script:
-  - docker exec -it benandfrank-odoo bash -c "flake8 openacademy-repo"
-  - docker exec -it benandfrank-odoo bash -c "./odoo-repo/odoo-bin -u openacademy --stop-after-init --test-enable"
+  # get modules changed and set environment variable INCLUDE_LINT
+   - travis_run_tests
+
+after_success:
+  - travis_after_tests_success
