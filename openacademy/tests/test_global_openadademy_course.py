@@ -32,7 +32,7 @@ class GlobalTestOpenAcademyCourse(TransactionCase):
         course_id = self.course.create({
             'name': name,
             'description': description,
-            'responsable_id': responsable_id
+            'responsible_id': responsable_id
         })
         return course_id
 
