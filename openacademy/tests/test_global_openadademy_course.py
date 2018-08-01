@@ -37,6 +37,8 @@ class GlobalTestOpenAcademyCourse(TransactionCase):
         return course_id
 
     # Method of test starts with 'def test_*(self):'1
+    # Mute SQL error
+    @mute_logger('odoo.sql_db')
     def test_01_same_name_description(self):
         """
         Test create a course with same name and description.
@@ -50,6 +52,8 @@ class GlobalTestOpenAcademyCourse(TransactionCase):
 
         self.assertTrue(test_01_same_name_description_correct)
 
+    # Mute SQL error
+    @mute_logger('odoo.sql_db')
     def test_02_two_course_same_name(self):
         """
         Test two create two course with same name.
@@ -66,6 +70,8 @@ class GlobalTestOpenAcademyCourse(TransactionCase):
 
         self.assertTrue(test_02_two_course_same_name_correct)
 
+    # Mute SQL error
+    @mute_logger('odoo.sql_db')
     def test_03_duplicate_course(self):
         """
         Test to duplicate a course and check that work fine!

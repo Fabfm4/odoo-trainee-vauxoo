@@ -89,8 +89,8 @@ class Session(models.Model):
 
     @api.depends('attendee_ids')
     def _get_attendees_count(self):
-        for r in self:
-            r.attendees_count = len(r.attendee_ids)
+        for record in self:
+            record.attendees_count = len(record.attendee_ids)
 
     @api.depends("seats", "attendee_ids")
     def _taken_seats(self):
@@ -122,24 +122,24 @@ class Session(models.Model):
 
     @api.depends("start_date", "duration")
     def _get_end_date(self):
-        for r in self.filtered('start_date'):
-            start = fields.Datetime.from_string(r.start_date)
-            duration = timedelta(days=r.duration, seconds=-1)
-            r.end_date = start + duration
+        for record in self.filtered('start_date'):
+            start = fields.Datetime.from_string(record.start_date)
+            duration = timedelta(days=record.duration, seconds=-1)
+            record.end_date = start + duration
 
     def _set_end_date(self):
-        for r in self:
-            if not (r.start_date and r.end_date):
+        for record in self:
+            if not (record.start_date and record.end_date):
                 continue
 
-            start_date = fields.Datetime.from_string(r.start_date)
-            end_date = fields.Datetime.from_string(r.end_date)
-            r.duration = (end_date - start_date).days + 1
+            start_date = fields.Datetime.from_string(record.start_date)
+            end_date = fields.Datetime.from_string(record.end_date)
+            record.duration = (end_date - start_date).days + 1
 
     @api.constrains('instructor_id', 'attendee_ids')
     def _check_instructor_not_in_attendees(self):
-        for r in self:
-            if r.instructor_id and r.instructor_id in r.attendee_ids:
+        for record in self:
+            if record.instructor_id and record.instructor_id in record.attendee_ids:  # noqa
                 raise exceptions.ValidationError(
                     _("A session's instructor can't be an attendee")
                 )

@@ -1,30 +1,35 @@
-import jsonrpclib
-
+# -*- coding: utf-8 -*-
+import odoorpc
 HOST = 'localhost'
 PORT = 8069
-DB = 'odoodb'
-USER = 'admin'
+DB = 'odoo-test'
+USER = 'sebastian.hernandez@benandfrank.com'
 PASS = 'admin'
+ROOT = 'http://%s:%d/xmlrpc/' % (HOST, PORT)
 
+# Prepare connection
+ODOO = odoorpc.ODOO('localhost', port=8069)
 
-# server proxy object
-url = "http://%s:%s/jsonrpc" % (HOST, PORT)
-server = jsonrpclib.Server(url)
+# Check available databases
+print(ODOO.db.list())
 
-# log in the given database
-uid = server.call(service="common", method="login", args=[DB, USER, PASS])
+# Login
+ODOO.login(DB, USER, PASS)
 
+# Current USER
+USER = ODOO.env.USER
+print(USER.name)
+print(USER.company_id.name)
 
-# helper function for invoking model methods
-def invoke(model, method, *args):
-    args = [DB, uid, PASS, model, method] + list(args)
-    return server.call(service="object", method="execute", args=args)
+# Simple raw query
+USER_DATA = ODOO.execute('res.USERs', 'read', [USER.id])
+print(USER_DATA)
 
-
-# create a new note
-args = {
-    'color': 8,
-    'memo': 'This is another note',
-    'create_uid': uid,
-}
-note_id = invoke('note.note', 'create', args)
+# Use all methos of a model
+if 'openacademy.course' in ODOO.env:
+    COURSE = ODOO.env['openacademy.course']
+    COURSE_IDS = COURSE.search([])
+    print(COURSE_IDS)
+    for course in COURSE.browse(COURSE_IDS):
+        course.name = course.name + ' D'
+        print(course.name)

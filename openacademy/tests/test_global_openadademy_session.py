@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from odoo.tests.common import TransactionCase
-from odoo.tools import mute_logger  # noqa
 from odoo.exceptions import ValidationError
+from odoo.tools import mute_logger  # noqa
 
 
 class GlobalTestOpenAcademySession(TransactionCase):
@@ -28,6 +28,8 @@ class GlobalTestOpenAcademySession(TransactionCase):
         return self.session.create(data)
 
     # Test methods
+    # Mute SQL error
+    @mute_logger('odoo.sql_db')
     def test_04_instructor_is_attendee(self):
         """
         Check that raise of 'A session's instructor can't be an attendee
@@ -53,6 +55,8 @@ class GlobalTestOpenAcademySession(TransactionCase):
 
         self.assertTrue(test_04_instructor_is_attendee_correct)
 
+    # Mute SQL error
+    @mute_logger('odoo.sql_db')
     def test_05_create_valid_session(self):
         """
         Check that raise of 'A session's instructor can't be an attendee

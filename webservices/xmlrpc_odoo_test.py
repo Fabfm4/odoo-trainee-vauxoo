@@ -1,37 +1,33 @@
+# -*- coding: utf-8 -*-
 import functools
-import xmlrpclib
-
+import xmlrpc.client
 HOST = 'localhost'
 PORT = 8069
-DB = 'odoodb'
-USER = 'admin'
+DB = 'odoo-test'
+USER = 'sebastian.hernandez@benandfrank.com'
 PASS = 'admin'
 ROOT = 'http://%s:%d/xmlrpc/' % (HOST, PORT)
 
-# 1. Login
-uid = xmlrpclib.ServerProxy(ROOT + 'common').login(DB, USER, PASS)
-print("Logged in as %s (uid:%d)" % (USER, uid))
+# Login
+uid = xmlrpc.client.ServerProxy(ROOT + 'common').login(DB, USER, PASS)
+print("Logged in as %s (uid: %d)" % (USER, uid))
 
-call = functools.partial(
-    xmlrpclib.ServerProxy(ROOT + 'object').execute,
+CALL = functools.partial(
+    xmlrpc.client.ServerProxy(ROOT + 'object').execute,
     DB, uid, PASS)
 
-# 2. Read the sessions
-sessions = call(
-    'openacademy.session', 'search_read', [], ['name', 'seats', 'course_id']
-)
-for session in sessions:
-    print("Session %s (%s seats) %s" % (
-        session['name'], session['seats'], session['course_id'])
-    )
-# 3.create a new session
-session_id = call('openacademy.session', 'create', {
-    'name': 'My session',
-    'course_id': 2,
-})
+# Read the SESSIONS
+SESSIONS = CALL('openacademy.session', 'search_read', [], ['name', 'seats'])
+for session in SESSIONS:
+    print("Session %s (%s seats)" % (session['name'], session['seats']))
 
-course_id = call('openacademy.course', 'search', [('name', 'ilike', '0')])[0]
-session_id = call('openacademy.session', 'create', {
-    'name': 'My session assigned',
-    'course_id': course_id
-})
+# Create a new session from Course 0
+COURSE_ID = CALL(
+    'openacademy.course',
+    'search',
+    [('name', 'ilike', 'Course 0')]
+)[0]
+SESSION_ID = CALL('openacademy.session', 'create', {
+    'name': 'My session',
+    'COURSE_ID': COURSE_ID,
+    })
